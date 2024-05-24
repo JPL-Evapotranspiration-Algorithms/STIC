@@ -6,18 +6,18 @@ Lead developer<br>
 NASA Jet Propulsion Laboratory 329G
 
 Kaniska Mallick (he/him)<br>
-[kaniska.mallick@list.lu](mailto:kaniska.mallick@list.lu)
-Algorithm inventor
+[kaniska.mallick@list.lu](mailto:kaniska.mallick@list.lu)<br>
+Algorithm inventor<br>
 Luxembourg Institute of Science and Technology
 
 Madeleine Pascolini-Campbell (she/her)<br>
-[madeleine.a.pascolini-campbell@jpl.nasa.gov](mailto:madeleine.a.pascolini-campbell@jpl.nasa.gov)
-Algorithm developer
+[madeleine.a.pascolini-campbell@jpl.nasa.gov](mailto:madeleine.a.pascolini-campbell@jpl.nasa.gov)<br>
+Algorithm developer<br>
 NASA Jet Propulsion Laboratory 329F
 
 Claire Villanueva-Weeks (she/her)<br>
 [claire.s.villanueva-weeks@jpl.nasa.gov](mailto:claire.s.villanueva-weeks@jpl.nasa.gov)<br>
-Code maintenance
+Code maintenance<br>
 NASA Jet Propulsion Laboratory 329G
 
 This repository will contain the python implementation for the Surface Temperature Initiated Closure (STIC) evapotranspiration model, used by the ECOsystem Spaceborne Thermal Radiometer Experiment on Space Station (ECOSTRESS) and Surface Biology and Geology (SBG) missions.
