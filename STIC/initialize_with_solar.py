@@ -6,7 +6,7 @@ import rasters as rt
 from rasters import Raster
 
 from .vegetation_conversion.vegetation_conversion import FVC_from_NDVI
-from .soil_heat_flux import calculate_soil_heat_flux
+from .soil_heat_flux import calculate_SEBAL_soil_heat_flux
 
 from .constants import *
 from .soil_moisture_initialization import initialize_soil_moisture
@@ -64,14 +64,11 @@ def initialize_with_solar(
     )
 
     # calculate soil heat flux
-    G = calculate_soil_heat_flux(
-        seconds_of_day=seconds_of_day,  # Number of seconds in the current day
+    G = calculate_SEBAL_soil_heat_flux(
         ST_C=ST_C,  # Surface temperature in Celsius
         NDVI=NDVI,  # Normalized Difference Vegetation Index
         albedo=albedo,  # Albedo of the surface
-        Rn=Rn_Wm2,  # Net radiation (W/m^2)
-        SM=SM,  # Soil moisture
-        method=G_method  # Method for calculating soil heat flux
+        Rn=Rn_Wm2  # Net radiation (W/m^2)
     )
 
     # get phi with new comp

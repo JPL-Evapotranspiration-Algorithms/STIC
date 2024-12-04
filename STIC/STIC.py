@@ -14,7 +14,6 @@ from .timer import Timer
 
 from rasters import Raster, RasterGeometry
 
-from .soil_heat_flux import calculate_soil_heat_flux, DEFAULT_G_METHOD
 from .vegetation_conversion.vegetation_conversion import FVC_from_NDVI, LAI_from_NDVI
 
 from .constants import *
@@ -28,6 +27,8 @@ from .initialize_without_solar import initialize_without_solar
 from .iterate_with_solar import iterate_with_solar
 from .iterate_without_solar import iterate_without_solar
 from .root_zone_initialization import calculate_root_zone_moisture
+
+from .soil_heat_flux import calculate_SEBAL_soil_heat_flux
 
 __author__ = 'Kaniska Mallick, Madeleine Pascolini-Campbell, Gregory Halverson'
 
@@ -112,18 +113,15 @@ def STIC(
     Estar_hPa = 6.13753 * np.exp((17.27 * ST_C) / (ST_C + 237.3))
 
     if Rg_Wm2 is None:
-        if G is None and SM is None:
-            raise ValueError("soil heat flux or soil moisture prior required if solar radiation is not given")
+        # if G is None and SM is None:
+        #     raise ValueError("soil heat flux or soil moisture prior required if solar radiation is not given")
 
         if G is None:
-            G = calculate_soil_heat_flux(
-                seconds_of_day=seconds_of_day,
+            G = calculate_SEBAL_soil_heat_flux(
                 ST_C=ST_C,
                 NDVI=NDVI,
                 albedo=albedo,
                 Rn=Rn_Wm2,
-                SM=SM,
-                method=G_method
             )
         
         phi_Wm2 = Rn_Wm2 - G
