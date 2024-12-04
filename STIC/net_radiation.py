@@ -1,7 +1,7 @@
 from typing import Union
 import numpy as np
 
-from raster import Raster
+from rasters import Raster
 
 from .constants import SB_SIGMA
 

@@ -1,12 +1,12 @@
 from typing import Union, Tuple
 import numpy as np
 
-import raster as rt
+import rasters as rt
 
-from raster import Raster
+from rasters import Raster
 
-from vegetation_conversion.vegetation_conversion import FVC_from_NDVI
-from soil_heat_flux import calculate_soil_heat_flux
+from .vegetation_conversion.vegetation_conversion import FVC_from_NDVI
+from .soil_heat_flux import calculate_soil_heat_flux
 
 from .constants import *
 from .soil_moisture_initialization import initialize_soil_moisture
@@ -36,7 +36,7 @@ def initialize_with_solar(
     ) -> Tuple[Union[Raster, np.ndarray]]:
     # Rn SOIL
     kRN = 0.6
-    Rn_soil = Rn_Wm2 * rt.exp(-kRN * LAI)
+    Rn_soil = Rn_Wm2 * np.exp(-kRN * LAI)
 
     LWnet = calculate_net_longwave_radiation(
         Ta_C=Ta_C, 
