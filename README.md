@@ -103,4 +103,4 @@ Import the `STIC` function from the `STIC` package.
 from STIC import STIC
 ```
 
-See the [ECOSTRESS example](ECOSTRESS Example.ipynb) for usage.
+See the [ECOSTRESS example](ECOSTRESS%20Example.ipynb) for usage.
