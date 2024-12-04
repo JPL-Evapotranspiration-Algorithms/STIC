@@ -5,7 +5,7 @@ import rasters as rt
 
 from rasters import Raster
 
-from .soil_heat_flux import calculate_soil_heat_flux
+from .soil_heat_flux import calculate_SEBAL_soil_heat_flux
 
 from .constants import *
 from .canopy_air_stream import calculate_canopy_air_stream_vapor_pressure
@@ -127,14 +127,11 @@ def iterate_with_solar(
     )
 
     # calculate soil heat flux
-    G = calculate_soil_heat_flux(
-        seconds_of_day=seconds_of_day,
+    G = calculate_SEBAL_soil_heat_flux(
         ST_C=ST_C,
         NDVI=NDVI,
         albedo=albedo,
-        Rn=Rn_Wm2,
-        SM=SM,
-        method=G_method
+        Rn=Rn_Wm2
     )
 
     # recompute phi
