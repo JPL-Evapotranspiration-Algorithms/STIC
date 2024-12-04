@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "STIC"
+version = "1.0.0"
+description = "Surface Temperature Initiated Closure (STIC) Evapotranspiration Model Python Implementation"
+readme = "README.md"
+authors = [
+    { name = "Gregory Halverson", email = "gregory.h.halverson@jpl.nasa.gov" },
+    { name = "Kaniska Mallick", email = "kaniska.mallick@list.lu" },
+    { name = "Madeleine Pascolini-Campbell", email = "madeleine.a.pascolini-campbell@jpl.nasa.gov" },
+    { name = "Claire S. Villanueva-Weeks", email = "claire.s.villanueva-weeks@jpl.gov" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "colored-logging",
+    "ECOv002-CMR",
+    "ECOv002-granules",
+    "geos5fp",
+    "numpy",
+    "pandas",
+    "rasters"
+]
+requires-python = ">=3.11"

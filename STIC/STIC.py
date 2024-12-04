@@ -5,17 +5,17 @@ from os.path import join, abspath, expanduser
 from typing import Dict, List
 import numpy as np
 import warnings
-from check_distribution.check_distribution import diagnostic
-import cl
-from meteorology_conversion.meteorology_conversion import calculate_air_density, calculate_specific_heat, calculate_specific_humidity, calculate_surface_pressure, celcius_to_kelvin
-import raster as rt
-from GEOS5FP import GEOS5FP
-from timer import Timer
+from .diagnostic import diagnostic
+import colored_logging as cl
+from .meteorology_conversion import calculate_air_density, calculate_specific_heat, calculate_specific_humidity, calculate_surface_pressure, celcius_to_kelvin
+import rasters as rt
+from geos5fp import GEOS5FP
+from .timer import Timer
 
-from raster import Raster, RasterGeometry
+from rasters import Raster, RasterGeometry
 
-from soil_heat_flux import calculate_soil_heat_flux, DEFAULT_G_METHOD
-from vegetation_conversion.vegetation_conversion import FVC_from_NDVI, LAI_from_NDVI
+from .soil_heat_flux import calculate_soil_heat_flux, DEFAULT_G_METHOD
+from .vegetation_conversion.vegetation_conversion import FVC_from_NDVI, LAI_from_NDVI
 
 from .constants import *
 from .closure import STIC_closure
@@ -38,7 +38,7 @@ MAX_ITERATIONS = 30
 USE_VARIABLE_ALPHA = True
 SHOW_DISTRIBUTIONS = True
 
-def process_STIC_array(
+def STIC(
         hour_of_day: Union[Raster, np.ndarray],  # hour of day
         ST_C: Union[Raster, np.ndarray],
         emissivity: Union[Raster, np.ndarray],
@@ -47,6 +47,7 @@ def process_STIC_array(
         Ta_C: Union[Raster, np.ndarray],
         RH: Union[Raster, np.ndarray],
         Rn_Wm2: Union[Raster, np.ndarray],
+        geometry: RasterGeometry = None,
         G: Union[Raster, np.ndarray] = None,
         G_method: str = DEFAULT_G_METHOD,
         SM: Union[Raster, np.ndarray] = None,
@@ -66,6 +67,9 @@ def process_STIC_array(
         use_variable_alpha: bool = USE_VARIABLE_ALPHA) -> Dict[str, Union[Raster, np.ndarray]]:
     results = {}
 
+    if geometry is None and isinstance(ST_C, Raster):
+        geometry = ST_C.geometry
+
     diag_kwargs = {
         "show_distributions": show_distributions, 
         "output_directory": diagnostic_directory
@@ -82,7 +86,7 @@ def process_STIC_array(
         LAI = LAI_from_NDVI(NDVI)
 
     # saturation air pressure in hPa
-    SVP_hPa = 6.13753 * (rt.exp((17.27 * Ta_C) / (Ta_C + 237.3)))
+    SVP_hPa = 6.13753 * (np.exp((17.27 * Ta_C) / (Ta_C + 237.3)))
 
     # calculate delta term if it's not given
     if delta_hPa is None:
@@ -105,7 +109,7 @@ def process_STIC_array(
     dTS_C = ST_C - Ta_C
 
     # saturation vapor pressure at surface temperature (hPa/K)
-    Estar_hPa = 6.13753 * rt.exp((17.27 * ST_C) / (ST_C + 237.3))
+    Estar_hPa = 6.13753 * np.exp((17.27 * ST_C) / (ST_C + 237.3))
 
     if Rg_Wm2 is None:
         if G is None and SM is None:
@@ -335,49 +339,56 @@ def process_STIC_array(
     results["PET"] = PET_Wm2
     results["G"] = G
 
+    if geometry is not None:
+        for name, array in results.items():
+            try:
+                results[name] = Raster(array.reshape(geometry.shape), geometry=geometry)
+            except Exception as e:
+                pass
+
     warnings.resetwarnings()
 
     return results
 
-def process_STIC_raster(
-        geometry: RasterGeometry,
-        hour_of_day: float,
-        ST_C: Raster,
-        emissivity: Raster,
-        NDVI: Raster,
-        albedo: Raster,
-        Ta_C: Raster,
-        RH: Raster,
-        Rn: Raster,
-        G: Raster = None,
-        G_method: str = DEFAULT_G_METHOD,
-        SM: Raster = None,
-        Rg: Raster = None,
-        LE_convergence_target: float = LE_CONVERGENCE_TARGET_WM2,
-        diagnostic_directory: str = None,
-        max_iterations: int = MAX_ITERATIONS) -> Dict[str, Raster]:
-    results = process_STIC_array(
-        hour_of_day=hour_of_day,
-        ST_C=ST_C,
-        emissivity=emissivity,
-        NDVI=NDVI,
-        albedo=albedo,
-        Ta_C=Ta_C,
-        RH=RH,
-        Rn_Wm2=Rn,
-        G=G,
-        G_method=G_method,
-        SM=SM,
-        Rg_Wm2=Rg,
-        LE_convergence_target=LE_convergence_target,
-        diagnostic_directory=diagnostic_directory,
-        max_iterations=max_iterations
-    )
+# def process_STIC_raster(
+#         geometry: RasterGeometry,
+#         hour_of_day: float,
+#         ST_C: Raster,
+#         emissivity: Raster,
+#         NDVI: Raster,
+#         albedo: Raster,
+#         Ta_C: Raster,
+#         RH: Raster,
+#         Rn: Raster,
+#         G: Raster = None,
+#         G_method: str = DEFAULT_G_METHOD,
+#         SM: Raster = None,
+#         Rg: Raster = None,
+#         LE_convergence_target: float = LE_CONVERGENCE_TARGET_WM2,
+#         diagnostic_directory: str = None,
+#         max_iterations: int = MAX_ITERATIONS) -> Dict[str, Raster]:
+#     results = process_STIC_array(
+#         hour_of_day=hour_of_day,
+#         ST_C=ST_C,
+#         emissivity=emissivity,
+#         NDVI=NDVI,
+#         albedo=albedo,
+#         Ta_C=Ta_C,
+#         RH=RH,
+#         Rn_Wm2=Rn,
+#         G=G,
+#         G_method=G_method,
+#         SM=SM,
+#         Rg_Wm2=Rg,
+#         LE_convergence_target=LE_convergence_target,
+#         diagnostic_directory=diagnostic_directory,
+#         max_iterations=max_iterations
+#     )
     
-    for name, array in results.items():
-        try:
-            results[name] = Raster(array.reshape(geometry.shape), geometry=geometry)
-        except Exception as e:
-            pass
+#     for name, array in results.items():
+#         try:
+#             results[name] = Raster(array.reshape(geometry.shape), geometry=geometry)
+#         except Exception as e:
+#             pass
     
-    return results
+#     return results

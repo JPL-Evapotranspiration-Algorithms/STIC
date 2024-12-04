@@ -1,11 +1,11 @@
 from typing import Union, Tuple
 import numpy as np
 
-import raster as rt
+import rasters as rt
 
-from raster import Raster
+from rasters import Raster
 
-from soil_heat_flux import calculate_soil_heat_flux
+from .soil_heat_flux import calculate_soil_heat_flux
 
 from .constants import *
 from .canopy_air_stream import calculate_canopy_air_stream_vapor_pressure

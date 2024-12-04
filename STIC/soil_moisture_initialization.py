@@ -1,10 +1,10 @@
 from typing import Union, Tuple
 import numpy as np
 
-import raster as rt
-from raster import Raster
+import rasters as rt
+from rasters import Raster
 
-from vegetation_conversion.vegetation_conversion import FVC_from_NDVI
+from .vegetation_conversion.vegetation_conversion import FVC_from_NDVI
 
 from .constants import GAMMA_HPA
 from .root_zone_initialization import calculate_root_zone_moisture

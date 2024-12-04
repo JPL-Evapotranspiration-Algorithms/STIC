@@ -1,8 +1,8 @@
 from typing import Union
 import numpy as np
 
-import raster as rt
-from raster import Raster
+import rasters as rt
+from rasters import Raster
 
 from .constants import GAMMA_HPA
 

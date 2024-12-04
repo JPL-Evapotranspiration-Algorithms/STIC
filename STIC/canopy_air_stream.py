@@ -1,9 +1,9 @@
 from typing import Union
 import numpy as np
 
-import raster as rt
+import rasters as rt
 
-from raster import Raster
+from rasters import Raster
 
 from .constants import *
 
