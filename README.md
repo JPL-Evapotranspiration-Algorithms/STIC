@@ -89,8 +89,18 @@ This package is being released according to the SPD-41 open-science requirements
 
 ## Installation
 
-Use the pip package manager to install this package
+Use the pip package manager to install the `STIC` PyPi package.
 
 ```
-pip install .
+pip install STIC
 ```
+
+## Usage
+
+Import the `STIC` function from the `STIC` package.
+
+```
+from STIC import STIC
+```
+
+See the [ECOSTRESS example](ECOSTRESS Example.ipynb) for usage.
