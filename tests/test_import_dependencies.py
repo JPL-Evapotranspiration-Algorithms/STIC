@@ -5,7 +5,7 @@ dependencies = [
     "colored_logging",
     "ECOv002_CMR",
     "ECOv002_granules",
-    "geos5fp",
+    "GEOS5FP",
     "numpy",
     "pandas",
     "rasters"
