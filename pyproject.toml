@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 
 [project]
 name = "STIC"
-version = "1.0.3"
+version = "1.0.4"
 description = "Surface Temperature Initiated Closure (STIC) Evapotranspiration Model Python Implementation"
 readme = "README.md"
 authors = [
@@ -20,7 +20,7 @@ dependencies = [
     "colored-logging",
     "ECOv002-CMR",
     "ECOv002-granules",
-    "geos5fp",
+    "GEOS5FP>=1.1.1",
     "numpy",
     "pandas",
     "rasters"
