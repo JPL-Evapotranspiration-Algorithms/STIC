@@ -8,7 +8,8 @@ dependencies = [
     "GEOS5FP",
     "numpy",
     "pandas",
-    "rasters"
+    "rasters",
+    "solar_apparent_time"
 ]
 
 # Generate individual test functions for each dependency

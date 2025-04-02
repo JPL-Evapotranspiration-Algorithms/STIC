@@ -10,6 +10,8 @@ import colored_logging as cl
 from .meteorology_conversion import calculate_air_density, calculate_specific_heat, calculate_specific_humidity, calculate_surface_pressure, celcius_to_kelvin
 import rasters as rt
 from GEOS5FP import GEOS5FP
+from solar_apparent_time import solar_day_of_year_for_area, solar_hour_of_day_for_area
+
 from .timer import Timer
 
 from rasters import Raster, RasterGeometry
@@ -34,21 +36,19 @@ __author__ = 'Kaniska Mallick, Madeleine Pascolini-Campbell, Gregory Halverson'
 
 logger = logging.getLogger(__name__)
 
-LE_CONVERGENCE_TARGET_WM2 = 2.0
-MAX_ITERATIONS = 30
-USE_VARIABLE_ALPHA = True
-SHOW_DISTRIBUTIONS = True
-
 def STIC_JPL(
-        hour_of_day: Union[Raster, np.ndarray],  # hour of day
         ST_C: Union[Raster, np.ndarray],
         emissivity: Union[Raster, np.ndarray],
         NDVI: Union[Raster, np.ndarray],
         albedo: Union[Raster, np.ndarray],
-        Ta_C: Union[Raster, np.ndarray],
-        RH: Union[Raster, np.ndarray],
         Rn_Wm2: Union[Raster, np.ndarray],
         geometry: RasterGeometry = None,
+        time_UTC: datetime = None,
+        hour_of_day: np.ndarray = None,
+        day_of_year: np.ndarray = None,
+        GEOS5FP_connection: GEOS5FP = None,
+        Ta_C: Union[Raster, np.ndarray] = None,
+        RH: Union[Raster, np.ndarray] = None,
         G: Union[Raster, np.ndarray] = None,
         G_method: str = DEFAULT_G_METHOD,
         SM: Union[Raster, np.ndarray] = None,
@@ -71,12 +71,30 @@ def STIC_JPL(
     if geometry is None and isinstance(ST_C, Raster):
         geometry = ST_C.geometry
 
+    if GEOS5FP_connection is None:
+        GEOS5FP_connection = GEOS5FP()
+
+    if (day_of_year is None or hour_of_day is None) and time_UTC is not None and geometry is not None:
+        day_of_year = solar_day_of_year_for_area(time_UTC=time_UTC, geometry=geometry)
+        hour_of_day = solar_hour_of_day_for_area(time_UTC=time_UTC, geometry=geometry)
+
+    if time_UTC is None and day_of_year is None and hour_of_day is None:
+        raise ValueError("no time given between time_UTC, day_of_year, and hour_of_day")
+
     diag_kwargs = {
         "show_distributions": show_distributions, 
         "output_directory": diagnostic_directory
     }
 
     seconds_of_day = hour_of_day * 3600.0
+
+    # load air temperature in Celsius if not provided
+    if Ta_C is None:
+        Ta_C = GEOS5FP_connection.Ta_C(time_UTC=time_UTC, geometry=geometry, resampling=resampling)
+
+    # load relative humidity if not provided
+    if RH is None:
+        RH = GEOS5FP_connection.RH(time_UTC=time_UTC, geometry=geometry, resampling=resampling)
 
     # calculate fraction of vegetation cover if it's not given
     if FVC is None:
@@ -337,56 +355,16 @@ def STIC_JPL(
     results["PET"] = PET_Wm2
     results["G"] = G
 
-    if geometry is not None:
+    if isinstance(geometry, RasterGeometry):
         for name, array in results.items():
             try:
                 results[name] = Raster(array.reshape(geometry.shape), geometry=geometry)
             except Exception as e:
                 pass
+        
+        results["LE"].cmap = ET_COLORMAP
+        results["PET"].cmap = ET_COLORMAP
 
     warnings.resetwarnings()
 
     return results
-
-# def process_STIC_raster(
-#         geometry: RasterGeometry,
-#         hour_of_day: float,
-#         ST_C: Raster,
-#         emissivity: Raster,
-#         NDVI: Raster,
-#         albedo: Raster,
-#         Ta_C: Raster,
-#         RH: Raster,
-#         Rn: Raster,
-#         G: Raster = None,
-#         G_method: str = DEFAULT_G_METHOD,
-#         SM: Raster = None,
-#         Rg: Raster = None,
-#         LE_convergence_target: float = LE_CONVERGENCE_TARGET_WM2,
-#         diagnostic_directory: str = None,
-#         max_iterations: int = MAX_ITERATIONS) -> Dict[str, Raster]:
-#     results = process_STIC_array(
-#         hour_of_day=hour_of_day,
-#         ST_C=ST_C,
-#         emissivity=emissivity,
-#         NDVI=NDVI,
-#         albedo=albedo,
-#         Ta_C=Ta_C,
-#         RH=RH,
-#         Rn_Wm2=Rn,
-#         G=G,
-#         G_method=G_method,
-#         SM=SM,
-#         Rg_Wm2=Rg,
-#         LE_convergence_target=LE_convergence_target,
-#         diagnostic_directory=diagnostic_directory,
-#         max_iterations=max_iterations
-#     )
-    
-#     for name, array in results.items():
-#         try:
-#             results[name] = Raster(array.reshape(geometry.shape), geometry=geometry)
-#         except Exception as e:
-#             pass
-    
-#     return results

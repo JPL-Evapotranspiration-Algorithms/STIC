@@ -1,4 +1,4 @@
-from .STIC import *
+from .STIC_JPL import *
 
 from os.path import join, abspath, dirname
 

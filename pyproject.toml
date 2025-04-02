@@ -23,9 +23,20 @@ dependencies = [
     "GEOS5FP>=1.1.1",
     "numpy",
     "pandas",
-    "rasters"
+    "rasters",
+    "solar-apparent-time"
 ]
 requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pytest>=6.0",
+    "pytest-cov",
+    "jupyter",
+    "pytest",
+    "twine"
+]
 
 [tool.setuptools.package-data]
 STIC_JPL = ["*.txt"]
