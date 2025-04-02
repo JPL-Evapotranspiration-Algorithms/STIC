@@ -2,8 +2,8 @@
 requires = ["setuptools", "wheel"]
 
 [project]
-name = "STIC"
-version = "1.0.4"
+name = "STIC-JPL"
+version = "1.1.0"
 description = "Surface Temperature Initiated Closure (STIC) Evapotranspiration Model Python Implementation"
 readme = "README.md"
 authors = [
@@ -28,11 +28,11 @@ dependencies = [
 requires-python = ">=3.10"
 
 [tool.setuptools.package-data]
-STIC = ["*.txt"]
+STIC_JPL = ["*.txt"]
 
 [project.urls]
-"Homepage" = "https://github.com/JPL-Evapotranspiration-Algorithms/STIC"
+"Homepage" = "https://github.com/JPL-Evapotranspiration-Algorithms/STIC-JPL"
 
 [tool.setuptools.packages.find]
-include = ["STIC", "STIC.*"]
+include = ["STIC_JPL", "STIC_JPL.*"]
 exclude = ["references"]

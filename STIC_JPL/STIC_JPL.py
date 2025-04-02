@@ -39,7 +39,7 @@ MAX_ITERATIONS = 30
 USE_VARIABLE_ALPHA = True
 SHOW_DISTRIBUTIONS = True
 
-def STIC(
+def STIC_JPL(
         hour_of_day: Union[Raster, np.ndarray],  # hour of day
         ST_C: Union[Raster, np.ndarray],
         emissivity: Union[Raster, np.ndarray],
